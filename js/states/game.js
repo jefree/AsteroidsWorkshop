@@ -2,10 +2,14 @@ var MyFirstGame = MyFirstGame || {};
 
 MyFirstGame.GameState = function(){
   //initialize global features for your game
+  this.SHIP_SPEED = 200;
+  this.AST_SPEED = 250;
+  this.AST_TIME = 1000;
+
   this.asteroids = [];
   this.score = 0;
+  this.astElapsedTime = 0;
 
-  this.SHIP_SPEED = 200;
 }
 
 MyFirstGame.GameState.prototype.preload = function() {
@@ -36,6 +40,25 @@ MyFirstGame.GameState.prototype.create = function() {
 
 MyFirstGame.GameState.prototype.update = function() {
   // check the rules of your game
+
+  //check if we must create a new asteroid
+  var deltaTime = this.game.time.physicsElapsedMS;
+
+  this.astElapsedTime += deltaTime;
+
+  if (this.astElapsedTime >= this.AST_TIME) {
+    this.createAsteroid();
+    this.astElapsedTime = 0;
+  }
+
+  for (var i=this.asteroids.length-1; i>=0; i--) {
+    if (this.asteroids[i].y > this.game.world.height + this.asteroids[i].height) {
+      console.log("murio un buen asteroide. RIP");
+      this.asteroids[i].destroy();
+      this.asteroids.splice(i, 1);
+    }
+  }
+
   this.ship.body.velocity.set(0, 0);
 
   if (this.left.isDown) {
@@ -49,4 +72,18 @@ MyFirstGame.GameState.prototype.update = function() {
 
 MyFirstGame.GameState.prototype.render = function() {
   //do debugging operations here
+}
+
+MyFirstGame.GameState.prototype.createAsteroid = function() {
+  var asteroid = this.game.add.sprite(0, 0, 'asteroid');
+  this.game.physics.enable(asteroid);
+
+  asteroid.animations.add('rotate', null, 24, true);
+  asteroid.play('rotate');
+
+  asteroid.body.velocity.y = this.AST_SPEED;
+  asteroid.anchor.set(0, 1);
+  asteroid.x = Math.random() * (this.game.world.width - asteroid.width);
+
+  this.asteroids.push(asteroid);
 }
