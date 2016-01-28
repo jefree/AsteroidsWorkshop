@@ -5,6 +5,7 @@ MyFirstGame.GameState = function(){
   this.asteroids = [];
   this.score = 0;
 
+  this.SHIP_SPEED = 200;
 }
 
 MyFirstGame.GameState.prototype.preload = function() {
@@ -26,17 +27,23 @@ MyFirstGame.GameState.prototype.create = function() {
   this.left = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
   this.right = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
 
+  //config the physics system
+  this.game.physics.startSystem(Phaser.Physics.ARCADE);
+
+  this.game.physics.arcade.enable(this.ship);
+  this.ship.body.collideWorldBounds = true;
 }
 
 MyFirstGame.GameState.prototype.update = function() {
   // check the rules of your game
+  this.ship.body.velocity.set(0, 0);
 
   if (this.left.isDown) {
-    this.ship.x -= 7;
-  }
+    this.ship.body.velocity.x = -this.SHIP_SPEED; 
+  } 
 
   if (this.right.isDown) {
-    this.ship.x += 7;
+    this.ship.body.velocity.x = this.SHIP_SPEED;
   }
 }
 
