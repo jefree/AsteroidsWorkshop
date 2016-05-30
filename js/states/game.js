@@ -36,6 +36,8 @@ MyFirstGame.GameState.prototype.create = function() {
 
   this.game.physics.arcade.enable(this.ship);
   this.ship.body.collideWorldBounds = true;
+
+  this.scoreText = this.add.text(550, 20, '0', {fill: 'white', fontSize: 16})
 }
 
 MyFirstGame.GameState.prototype.update = function() {
@@ -53,9 +55,10 @@ MyFirstGame.GameState.prototype.update = function() {
 
   for (var i=this.asteroids.length-1; i>=0; i--) {
     if (this.asteroids[i].y > this.game.world.height + this.asteroids[i].height) {
-      console.log("murio un buen asteroide. RIP");
       this.asteroids[i].destroy();
       this.asteroids.splice(i, 1);
+      this.score += 1;
+      this.scoreText.text = this.score;
     }
   }
 
